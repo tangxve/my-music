@@ -38,6 +38,7 @@
         })
       },
       // 代理BScroll 方法 enable disable refresh scrollTo scrollToElment
+      // 代理BScroll 方法 enable disable refresh scrollTo scrollToElment
       enable() {
         // 如果有 this.scroll 执行 this.scroll.enable() if(this.scroll) {this.scroll.enable()}
         this.scroll && this.scroll.enable()
