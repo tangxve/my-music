@@ -14,19 +14,19 @@
   const HOT_SINGER_LEN = 10
 
   export default {
-    data() {
+    data () {
       return {
         singers: []
       }
     },
-    created() {
+    created () {
       // 获取歌手列表
       this._getSingerList()
       console.log(typeof Singer)
     },
     methods: {
       // 获取歌手列表
-      _getSingerList() {
+      _getSingerList () {
         getSingerList().then((res) => {
           if (res.code === ERR_OK) {
             this.singers = this._normalizeSinger(res.data.list)
@@ -34,7 +34,7 @@
         })
       },
       // 处理数据列表
-      _normalizeSinger(list) {
+      _normalizeSinger (list) {
         let map = {
           hot: {
             title: HOT_NAME,
@@ -61,12 +61,14 @@
             name: item.Fsinger_name
           }))
         })
+        console.log(map)
         // 为了得到有序列表，需要处理map
         // hot 数组
         let hot = []
         let ret = []
         for (let key in map) {
           let val = map[key]
+          // 正则校验 title是否是 字母
           if (val.title.match(/[a-zA-Z]/)) {
             ret.push(val)
           } else if (val.title === HOT_NAME) {
