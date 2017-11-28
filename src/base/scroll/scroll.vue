@@ -20,6 +20,11 @@
       data: {
         type: Array,
         default: null
+      },
+      // scroll组件要不要监听滚动事件
+      listenScroll: {
+        type: Boolean,
+        default: false
       }
     },
     mounted() {
@@ -36,8 +41,16 @@
           probeType: this.probeType,
           click: this.click
         })
+
+        // 判断是否监听scroll事件别派发出去
+        if (this.listenScroll) {
+          let me = this
+          this.scroll.on('scroll', (pos) => {
+            // 这里的this指向是betterScroll 上面需要转换下
+            me.$emit('scroll', pos)
+          })
+        }
       },
-      // 代理BScroll 方法 enable disable refresh scrollTo scrollToElment
       // 代理BScroll 方法 enable disable refresh scrollTo scrollToElment
       enable() {
         // 如果有 this.scroll 执行 this.scroll.enable() if(this.scroll) {this.scroll.enable()}

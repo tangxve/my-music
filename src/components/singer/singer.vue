@@ -22,7 +22,6 @@
     created () {
       // 获取歌手列表
       this._getSingerList()
-      console.log(typeof Singer)
     },
     methods: {
       // 获取歌手列表
@@ -61,7 +60,6 @@
             name: item.Fsinger_name
           }))
         })
-        console.log(map)
         // 为了得到有序列表，需要处理map
         // hot 数组
         let hot = []
