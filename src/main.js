@@ -1,6 +1,7 @@
 import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
+import store from './store'
 import router from './router'
 // 消除 移动端点击300ms延迟 fastclick
 import fasclick from 'fastclick'
@@ -18,5 +19,6 @@ Vue.use(VueLazyload, {
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 })

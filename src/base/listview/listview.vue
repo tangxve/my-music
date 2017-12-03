@@ -9,7 +9,7 @@
       <li class="list-group" v-for="group in data" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="item in group.items">
+          <li class="list-group-item" @click="selectItem(item)" v-for="item in group.items">
             <img class="avatar" v-lazy="item.avatar"/>
             <span class="name">{{item.name}}</span>
           </li>
@@ -79,6 +79,10 @@
       }
     },
     methods: {
+      // 派发出点击事件。 listview只是基础组件，不是业务组件
+      selectItem(item) {
+        this.$emit('select', item)
+      },
       // touchStart 事件
       onShortcutTouchStart(e) {
         let anchorIndex = getData(e.target, 'index')
@@ -160,7 +164,6 @@
         this.currenIndex = this.listHeight.length - 2
       },
       diff(newVal) {
-        console.log(newVal)
         let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
         // 判断如果相等就不用改变DOM 直接return 优化性能 减少dom操作
         if (this.fixedTop === fixedTop) {
