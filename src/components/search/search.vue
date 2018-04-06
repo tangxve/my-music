@@ -1,6 +1,11 @@
 <template>
   <div>
-    搜索页面
+    搜索页面，待开发，完成时间不详
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>(゜-゜)つロ 你随意</p>
   </div>
 </template>
 

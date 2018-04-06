@@ -1,7 +1,12 @@
 <template>
   <div>
-    排行页面
-    <img :src="`${item.url}.png`" alt="" width="30">
+    排行榜页面，待开发，完成时间不详.
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>(゜-゜)つロ 你随意</p>
+    <!--<img :src="`${item.url}.png`" alt="" width="30">-->
   </div>
 </template>
 
