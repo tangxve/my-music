@@ -1,7 +1,7 @@
 <template>
   <div class="m-header">
     <div class="icon"></div>
-    <h1 class="text">Chicken Music</h1>
+    <h1 class="text">大明湖畔 Music</h1>
   </div>
 </template>
 
@@ -26,7 +26,8 @@
       width: 30px
       height: 32px
       margin-right: 9px
-      bg-image('logo')
+      /*bg-image('logo')*/
+      background-image url("../../common/image/WechatIMG87.jpeg")
       background-size: 30px 32px
     .text
       display: inline-block
