@@ -17,7 +17,7 @@
     <scroll class="list" @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs"
             ref="list">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="selectItem"></song-list>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -75,6 +75,9 @@
       },
       back() {
         this.$router.back()
+      },
+      selectItem(ind) {
+
       }
     },
     watch: {
