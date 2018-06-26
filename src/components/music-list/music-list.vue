@@ -31,6 +31,7 @@
   import SongList from 'base/song-list/song-list'
   import { prefixStyle } from 'common/js/dom'
   import Loading from 'base/loading/loading'
+  import { mapActions } from 'vuex'
 
   const RESERVED_HEIGHT = 40
   const transform = prefixStyle('transform')
@@ -70,14 +71,18 @@
       this.$refs.list.$el.style.top = `${this.imageHight}px`
     },
     methods: {
+      ...mapActions(['selcetPlay']),
       scroll(pos) {
         this.scrollY = pos.y
       },
       back() {
         this.$router.back()
       },
-      selectItem(ind) {
-
+      selectItem(item, index) {
+        this.selcetPlay({
+          list: this.songs,
+          index
+        })
       }
     },
     watch: {
