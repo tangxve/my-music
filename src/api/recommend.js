@@ -17,7 +17,7 @@ export function getRecommend () {
   return jsonp(url, data, options)
 }
 export function getDiscList () {
-  const url = debug ? '/api/getDiscList' : 'http://tangxue.me/my-music/api/getDiscList'
+  const url = debug ? '/api/getDiscList' : 'http://tangxue.me/api/getDiscList'
   
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
