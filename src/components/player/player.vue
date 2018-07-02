@@ -19,7 +19,7 @@
         <div class="middle">
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd" :class="cdCls">
                 <img class="image" :src="currentSong.image">
               </div>
             </div>
@@ -34,7 +34,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play"></i>
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -50,22 +50,21 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img width="40" height="40" :src="currentSong.image">
+          <img width="40" height="40" :src="currentSong.image" :class="cdCls">
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <!--<progress-circle :radius="radius" :percent="percent">-->
-          <!--<i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>-->
-          <!--</progress-circle>-->
+          <i :class="miniIcon" @click.stop="togglePlaying"></i>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <audio ref="audio" :src="currentSong.url"></audio>
   </div>
 </template>
 
@@ -85,14 +84,25 @@
 
   export default {
     computed: {
+      // 计算属性绑定 class 避免HTML标签过于复杂
+      cdCls() {
+        return this.playing ? 'play' : 'play pause'
+      },
+      playIcon() {
+        return this.playing ? 'icon-pause' : 'icon-play'
+      },
+      miniIcon() {
+        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+      },
       ...mapGetters([
         'fullScreen',
         'playlist',
-        'currentSong'
+        'currentSong',
+        'playing'
       ])
     },
     methods: {
-      ...mapMutations(['SET_FULL_SCREEN']),
+      ...mapMutations(['SET_FULL_SCREEN', 'SET_PLAYING_STATE']),
       back() {
         this.SET_FULL_SCREEN(false)
       },
@@ -140,6 +150,10 @@
         this.$refs.cdWrapper.style.transition = ''
         this.$refs.cdWrapper.style[transform] = ''
       },
+      // 歌曲开关
+      togglePlaying() {
+        this.SET_PLAYING_STATE(!this.playing)
+      },
       // 获取坐标
       _getPosAndScale() {
         // 小CD 的 width
@@ -160,6 +174,22 @@
         return {
           x, y, scale
         }
+      }
+    },
+    watch: {
+      currentSong() {
+        // if (!newSong.id || !newSong.url || newSong.id === oldSong.id) {
+        //   return
+        // }
+        this.$nextTick(() => {
+          this.$refs.audio.play()
+        })
+      },
+      playing(newPlaying) {
+        const audio = this.$refs.audio
+        this.$nextTick(() => {
+          newPlaying ? audio.play() : audio.pause()
+        })
       }
     }
   }
