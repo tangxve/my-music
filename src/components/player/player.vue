@@ -26,18 +26,25 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
+            </div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i class="icon-prev" @click="prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i :class="playIcon" @click="togglePlaying"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -64,7 +71,7 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updatetime"></audio>
   </div>
 </template>
 
@@ -72,7 +79,7 @@
   import { mapGetters, mapMutations } from 'vuex'
   import animations from 'create-keyframe-animation'
   import { prefixStyle } from 'common/js/dom'
-  // import ProgressBar from 'base/progress-bar/progress-bar'
+  import ProgressBar from 'base/progress-bar/progress-bar'
   // import ProgressCircle from 'base/progress-circle/progress-circle'
   // import {playMode} from 'common/js/config'
   // import {shuffle} from 'common/js/util'
@@ -83,6 +90,15 @@
   // const transitionDuration = prefixStyle('transitionDuration')
 
   export default {
+    components: {
+      ProgressBar
+    },
+    data() {
+      return {
+        songReady: false,
+        currentTime: 0
+      }
+    },
     computed: {
       // 计算属性绑定 class 避免HTML标签过于复杂
       cdCls() {
@@ -94,15 +110,23 @@
       miniIcon() {
         return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
       },
+      disableCls() {
+        return this.songReady ? '' : 'disable'
+      },
+      // 歌曲播放比例 当前播放时间 / 歌曲总时长
+      percent() {
+        return this.currentTime / this.currentSong.duration
+      },
       ...mapGetters([
         'fullScreen',
         'playlist',
         'currentSong',
-        'playing'
+        'playing',
+        'currentIndex'
       ])
     },
     methods: {
-      ...mapMutations(['SET_FULL_SCREEN', 'SET_PLAYING_STATE']),
+      ...mapMutations(['SET_FULL_SCREEN', 'SET_PLAYING_STATE', 'SET_CURRENT_INDEX']),
       back() {
         this.SET_FULL_SCREEN(false)
       },
@@ -150,9 +174,70 @@
         this.$refs.cdWrapper.style.transition = ''
         this.$refs.cdWrapper.style[transform] = ''
       },
-      // 歌曲开关
+      // 播放暂停
       togglePlaying() {
         this.SET_PLAYING_STATE(!this.playing)
+      },
+      // 上一首
+      prev() {
+        if (!this.songReady) return
+        let index = this.currentIndex - 1
+        // 最后一首歌
+        if (index === -1) {
+          index = this.playlist.length - 1
+        }
+        this.SET_CURRENT_INDEX(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
+        this.songReady = false
+      },
+      // 下一首
+      next() {
+        if (!this.songReady) return
+        let index = this.currentIndex + 1
+        // 最后一首歌
+        if (index === this.playlist.length) {
+          index = 0
+        }
+        this.SET_CURRENT_INDEX(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
+        this.songReady = false
+      },
+      // audio 播放的回调
+      ready() {
+        this.songReady = true
+      },
+      // audio 播放失败的回调
+      error() {
+        this.songReady = true
+      },
+      updatetime(e) {
+        this.currentTime = e.target.currentTime
+      },
+      format(interval) {
+        // | 0 表示取整
+        interval = interval | 0
+        const minute = interval / 60 | 0
+        const second = this._pad(interval % 60)
+        return `${minute}:${second}`
+      },
+      onProgressBarChange(percent) {
+        // audio当前播放时间是可读写的。总时长 * 比例
+        this.$refs.audio.currentTime = this.currentSong.duration * percent
+        if (!this.playing) {
+          this.togglePlaying()
+        }
+      },
+      _pad(num, n = 2) {
+        let len = num.toString().length
+        while (len < n) {
+          num = '0' + num
+          len++
+        }
+        return num
       },
       // 获取坐标
       _getPosAndScale() {
