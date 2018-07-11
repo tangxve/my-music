@@ -48,7 +48,7 @@ module.exports = {
   },
 
   build: {
-    port: 8082,
+    port: 8088,
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
 
